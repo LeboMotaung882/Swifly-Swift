@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swifly Fare - Convenient Shopping</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        
+        /* Custom styles to complement Tailwind and ensure responsiveness */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc; /* A very light grey to complement the blue/pink */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a7d9f7; /* Light blue */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #87c7ed; /* Slightly darker blue */
+        }
+        .main-content {
+            flex-grow: 1;
+        }
+        
+        /* Mobile navigation overlay */
+        .mobile-nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 280px;
+            background: white;
+            z-index: 60;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+        
+        /* Breadcrumb styling */
+        .breadcrumb {
+            background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
+        }
+        
+        /* Trending badge animation */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+        }
+        
+        .trending-badge {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="font-inter">
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-nav-overlay" class="mobile-nav-overlay" onclick="toggleMobileNav()"></div>
+    
+    <!-- Mobile Navigation -->
+    <nav id="mobile-nav" class="mobile-nav">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-blue-800">Menu</h2>
+                <button onclick="toggleMobileNav()" class="p-2 hover:bg-gray-100 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="space-y-2">
+                <a href="#" onclick="navigateTo('home'); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">Home</a>
+                <a href="#" onclick="scrollToTrending(); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">Trending</a>
+                <a href="#" onclick="navigateTo('cart'); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">Cart</a>
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <h3 class="text-sm font-semibold text-gray-600 mb-2">Categories</h3>
+                    <div id="mobile-categories" class="space-y-1">
+                        <!-- Mobile categories will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header id="main-header" class="w-full bg-blue-50 shadow-md p-4 flex items-center justify-between sticky top-0 z-10 border-b border-blue-200">
+        <!-- Logo -->
+        <div class="flex items-center cursor-pointer" onclick="navigateTo('home')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <h1 class="text-2xl md:text-3xl font-bold ml-2 text-blue-800">Swifly Fare</h1>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="flex-grow max-w-xl mx-4 relative hidden md:block">
+            <input
+                id="search-input"
+                type="text"
+                placeholder="Search products..."
+                class="w-full p-3 pl-12 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-300 ease-in-out"
+                oninput="handleSearch(this.value)"
+                onblur="setTimeout(() => hideSearchResults(), 150)"
+            />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <div id="search-results" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 hidden z-50 max-h-80 overflow-y-auto">
+                <!-- Search suggestions will appear here -->
+            </div>
+        </div>
+
+        <!-- Right side icons -->
+        <div class="flex items-center space-x-4">
+            <!-- Search icon for mobile -->
+            <button id="mobile-search-btn" class="md:hidden p-2 hover:bg-blue-100 rounded-lg" onclick="toggleMobileSearch()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+            
+            <!-- Cart Icon -->
+            <div class="relative cursor-pointer" onclick="navigateTo('cart')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">
+                    0
+                </span>
+            </div>
+            
+            <!-- Mobile menu button -->
+            <button class="md:hidden p-2 hover:bg-blue-100 rounded-lg" onclick="toggleMobileNav()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Search Bar -->
+    <div id="mobile-search" class="w-full bg-blue-50 border-b border-blue-200 p-4 hidden md:hidden">
+        <div class="relative">
+            <input
+                id="mobile-search-input"
+                type="text"
+                placeholder="Search products..."
+                class="w-full p-3 pl-12 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                oninput="handleSearch(this.value)"
+            />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-4 top-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <nav id="breadcrumb" class="breadcrumb w-full p-3 border-b border-gray-200 hidden">
+        <div class="container mx-auto">
+            <div class="flex items-center space-x-2 text-sm">
+                <a href="#" onclick="navigateTo('home')" class="text-blue-600 hover:text-blue-800">Home</a>
+                <span class="text-gray-400">></span>
+                <span id="breadcrumb-current" class="text-gray-600">All Products</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navbar Section (Categories) -->
+    <nav id="main-navbar" class="w-full bg-pink-50 shadow-md p-3 border-b border-pink-200 hidden md:block">
+        <div id="category-buttons" class="container mx-auto flex flex-wrap justify-center gap-4">
+            <!-- Category buttons will be rendered here by JavaScript -->
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content-area" class="main-content">
+        <!-- Home page content (hero + trending + product list) or cart page will be rendered here by JavaScript -->
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="w-full bg-blue-50 shadow-md p-6 text-center text-gray-500 border-t border-blue-200">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                    <h3 class="font-bold text-blue-800 mb-2">Swifly Fare</h3>
+                    <p class="text-sm">Your daily essentials, swiftly delivered.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-600 mb-2">Quick Links</h4>
+                    <div class="space-y-1 text-sm">
+                        <a href="#" onclick="navigateTo('home')" class="block hover:text-blue-600">Home</a>
+                        <a href="#" onclick="scrollToTrending()" class="block hover:text-blue-600">Trending</a>
+                        <a href="#" onclick="navigateTo('cart')" class="block hover:text-blue-600">Cart</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-600 mb-2">Contact</h4>
+                    <p class="text-sm">Email: support@swiflyfare.com</p>
+                    <p class="text-sm">Phone: 084 123 4567</p>
+                </div>
+                <div class="mt-6 pt-6 border-t border-gray-300 text-xs text-gray-500">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+            <h4 class="font-semibold text-gray-600 mb-2">Shipping Policy</h4>
+            <p>Standard delivery: 3-5 business days</p>
+            <p>Free shipping on orders over R450</p>
+        </div>
+        <div>
+            <h4 class="font-semibold text-gray-600 mb-2">Returns</h4>
+            <p>30-day return policy</p>
+            <p>Items must be unused with original packaging</p>
+        </div>
+        <div>
+            <h4 class="font-semibold text-gray-600 mb-2">Legal</h4>
+            <p><a href="#" class="hover:underline">Terms & Conditions</a></p>
+            <p><a href="#" class="hover:underline">Privacy Policy</a></p>
+        </div>
+    </div>
+</div>
+            </div>
+            <hr class="border-gray-300 mb-4">
+            <p>&copy; <span id="current-year"></span> Swifly Fare. All rights reserved.</p>
+            <p class="mt-2">Designed with convenience in mind.</p>
+        </div>
+    </footer>
+
+   <script src="script.js" defer></script>
+
+</body>
+</html>
