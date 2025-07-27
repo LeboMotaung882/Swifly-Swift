@@ -107,7 +107,7 @@
         </div>
         <div class="p-4">
             <div class="space-y-2">
-                <a href="#" onclick="navigateTo('home'); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">Home</a>
+                <a href="#" onclick="navigateTo('index'); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">index</a>
                 <a href="#" onclick="scrollToTrending(); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">Trending</a>
                 <a href="#" onclick="navigateTo('cart'); toggleMobileNav();" class="block px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-800 font-medium">Cart</a>
                 <div class="border-t border-gray-200 pt-4 mt-4">
@@ -123,7 +123,7 @@
     <!-- Header Section -->
     <header id="main-header" class="w-full bg-blue-50 shadow-md p-4 flex items-center justify-between sticky top-0 z-10 border-b border-blue-200">
         <!-- Logo -->
-        <div class="flex items-center cursor-pointer" onclick="navigateTo('home')">
+        <div class="flex items-center cursor-pointer" onclick="navigateTo('index')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
@@ -196,7 +196,7 @@
     <nav id="breadcrumb" class="breadcrumb w-full p-3 border-b border-gray-200 hidden">
         <div class="container mx-auto">
             <div class="flex items-center space-x-2 text-sm">
-                <a href="#" onclick="navigateTo('home')" class="text-blue-600 hover:text-blue-800">Home</a>
+                <a href="#" onclick="navigateTo('index')" class="text-blue-600 hover:text-blue-800">index</a>
                 <span class="text-gray-400">></span>
                 <span id="breadcrumb-current" class="text-gray-600">All Products</span>
             </div>
@@ -212,9 +212,9 @@
 
     <!-- Main Content Area -->
     <main id="main-content-area" class="main-content">
-        <!-- Home page content (hero + trending + product list) or cart page will be rendered here by JavaScript -->
+        <!-- index page content (hero + trending + product list) or cart page will be rendered here by JavaScript -->
     </main>
-
+ 
     <!-- Footer Section -->
     <footer class="w-full bg-blue-50 shadow-md p-6 text-center text-gray-500 border-t border-blue-200">
         <div class="container mx-auto">
@@ -226,7 +226,7 @@
                 <div>
                     <h4 class="font-semibold text-gray-600 mb-2">Quick Links</h4>
                     <div class="space-y-1 text-sm">
-                        <a href="#" onclick="navigateTo('home')" class="block hover:text-blue-600">Home</a>
+                        <a href="#" onclick="navigateTo('index')" class="block hover:text-blue-600">index</a>
                         <a href="#" onclick="scrollToTrending()" class="block hover:text-blue-600">Trending</a>
                         <a href="#" onclick="navigateTo('cart')" class="block hover:text-blue-600">Cart</a>
                     </div>
